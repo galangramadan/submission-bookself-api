@@ -78,11 +78,69 @@ const addBookHandler = (request, h) => {
 };
 
 const getAllBookHandler = (request, h) => {
+  const { name, reading, finished } = request.query;
+
   const data = books.map((book) => ({
     id: book.id,
     name: book.name,
     publisher: book.publisher,
   }));
+
+  if (name) {
+    const result = data.filter((book) =>
+      book.name.toLowerCase().includes(name.toLowerCase())
+    );
+
+    return {
+      status: "success",
+      data: {
+        books: result,
+      },
+    };
+  }
+
+  if (reading || finished) {
+    let filteredData;
+    if (reading) {
+      filteredData = books.filter(
+        (book) => book.reading === toBoolean(reading)
+      );
+    }
+
+    if (finished) {
+      filteredData = books.filter(
+        (book) => book.finished === toBoolean(finished)
+      );
+    }
+
+    const result = filteredData.map((book) => ({
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    }));
+
+    function toBoolean(num) {
+      if (num === "1") {
+        return true;
+      } else if (num === "0") {
+        return false;
+      } else {
+        return {
+          status: "success",
+          data: {
+            books: data,
+          },
+        };
+      }
+    }
+
+    return {
+      status: "success",
+      data: {
+        books: result,
+      },
+    };
+  }
 
   const response = h.response({
     status: "success",
@@ -177,9 +235,31 @@ const updateBookHandler = (request, h) => {
   return response;
 };
 
+const deleteBookHandler = (request, h) => {
+  const { bookId } = request.params;
+  const index = books.findIndex((book) => book.id === bookId);
+
+  if (index !== -1) {
+    books.splice(index, 1);
+
+    return {
+      status: "success",
+      message: "Buku berhasil dihapus",
+    };
+  }
+
+  const response = h.response({
+    status: "fail",
+    message: "Buku gagal dihapus. Id tidak ditemukan",
+  });
+  response.code(404);
+  return response;
+};
+
 module.exports = {
   addBookHandler,
   getAllBookHandler,
   getDetailBookHandler,
   updateBookHandler,
+  deleteBookHandler,
 };

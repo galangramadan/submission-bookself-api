@@ -9,5 +9,6 @@
     "ecmaVersion": "latest"
   },
   "plugins": ["prettier"],
-  "rules": { "prettier/prettier": ["error", { "endOfLine": "auto" }] }
+  "rules": { "prettier/prettier": ["error", { "endOfLine": "auto" }] },
+  "comma-dangle": 0
 }
