@@ -88,7 +88,7 @@ const getAllBookHandler = (request, h) => {
 
   if (name) {
     const result = data.filter((book) =>
-      book.name.toLowerCase().includes(name.toLowerCase())
+      book.name.toLowerCase().includes(name.toLowerCase()),
     );
 
     return {
@@ -101,15 +101,33 @@ const getAllBookHandler = (request, h) => {
 
   if (reading || finished) {
     let filteredData;
+
+    const toBoolean = (num) => {
+      if (num === "1") {
+        return true;
+      }
+
+      if (num === "0") {
+        return false;
+      }
+
+      return {
+        status: "success",
+        data: {
+          books: data,
+        },
+      };
+    };
+
     if (reading) {
       filteredData = books.filter(
-        (book) => book.reading === toBoolean(reading)
+        (book) => book.reading === toBoolean(reading),
       );
     }
 
     if (finished) {
       filteredData = books.filter(
-        (book) => book.finished === toBoolean(finished)
+        (book) => book.finished === toBoolean(finished),
       );
     }
 
@@ -118,21 +136,6 @@ const getAllBookHandler = (request, h) => {
       name: book.name,
       publisher: book.publisher,
     }));
-
-    function toBoolean(num) {
-      if (num === "1") {
-        return true;
-      } else if (num === "0") {
-        return false;
-      } else {
-        return {
-          status: "success",
-          data: {
-            books: data,
-          },
-        };
-      }
-    }
 
     return {
       status: "success",
